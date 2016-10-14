@@ -7,31 +7,30 @@ var router = express.Router();
 var models = require('../models');
 
 router.get('/', function (req, res) {
-	models.burger.findAll();
+	return models.burger.findAll()
+  .then(function(burgers) {
+    return res.render('index', {burgers: burgers});
+  })
 });
-// .then(function(burgers) {
-//     res.render('burgers/index', {burgers:burgers});
-//   });
 
 
 router.post('/create', function (req, res) {
-models.Burger.update(
-  {
-    devoured: req.body.devoured
-  },
-  {
-    where: { id : req.params.id }
+  // SOLUTION:
+  // =========
+  // use the Cat model to create a cat based on what's
+  // passed in req.body (name, sleepy, user_id)
+  models.burger.create({
+    burger_name: req.body.name,
+    devoured: req.body.devoured,
   })
-  // connect it to this .then.
-  .then(function (result) {
+  // connect the .create to this .then
+  .then(function() {
     res.redirect('/');
-  }, function(rejectedPromiseError){
-
   });
 });
 
 router.put('/update/:id', function (req, res) {
-	models.Burger.update({
+	models.burger.update({
     	devoured: req.body.devoured
   	},{
     where: { id : req.params.id }
@@ -45,7 +44,7 @@ router.put('/update/:id', function (req, res) {
 
 
 router.delete('/delete/:id', function (req, res) {
-	 models.Burger.destroy({
+	 models.burger.destroy({
     where: {
       id: req.params.id
     }
